@@ -1,6 +1,6 @@
 name: astrbot_plugin_random_pic
 display_name: 随机图片
-version: 1.0.0
+version: 1.0.1
 desc: 从用户自定义的 GitHub 仓库目录（或任意返回相同 JSON 结构的 API）中随机抽取一张图片发送。
 short_desc: 随机图片发送器
 author: chomoe
