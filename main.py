@@ -1,5 +1,7 @@
+import os
 import random
 import asyncio
+import tempfile
 import urllib.parse
 from typing import Any
 
@@ -83,8 +85,36 @@ class RandomPicPlugin(Star):
                         chosen_pic_encoded = urllib.parse.quote(chosen_pic)
                         pic_url = f"{cdn_prefix}{chosen_pic_encoded}"
                         
-                        logger.info(f"[随机图片] 成功抽取并发送图片: {pic_url}")
-                        yield event.image_result(pic_url)
+                        logger.info(f"[随机图片] 成功抽取，开始下载图片: {pic_url}")
+                        
+                        try:
+                            # 下载图片到本地临时文件
+                            async with session.get(pic_url) as pic_resp:
+                                if pic_resp.status != 200:
+                                    logger.error(f"[随机图片] 下载图片失败，状态码: {pic_resp.status}")
+                                    yield event.plain_result(f"下载图片失败（状态码 {pic_resp.status}），请稍后再试。")
+                                    event.stop_event()
+                                    return
+                                
+                                pic_data = await pic_resp.read()
+                                
+                            # 获取文件后缀
+                            _, ext = os.path.splitext(chosen_pic)
+                            if not ext:
+                                ext = ".jpg"
+                                
+                            fd, temp_path = tempfile.mkstemp(suffix=ext)
+                            with os.fdopen(fd, 'wb') as f:
+                                f.write(pic_data)
+                                
+                            logger.info(f"[随机图片] 图片已保存至临时文件，准备发送: {temp_path}")
+                            yield event.image_result(temp_path)
+                            
+                        except Exception as e:
+                            logger.error(f"[随机图片] 下载图片时发生错误: {str(e)}")
+                            yield event.plain_result("下载图片时发生错误，请稍后再试。")
+                            event.stop_event()
+                            return
                         
                         # 拦截事件，避免被 LLM 等后续流程处理
                         event.stop_event()
