@@ -1,5 +1,6 @@
 import random
 import asyncio
+import urllib.parse
 from typing import Any
 
 import aiohttp
@@ -79,7 +80,8 @@ class RandomPicPlugin(Star):
                             
                         # 随机抽取一张图片
                         chosen_pic = random.choice(image_files)
-                        pic_url = f"{cdn_prefix}{chosen_pic}"
+                        chosen_pic_encoded = urllib.parse.quote(chosen_pic)
+                        pic_url = f"{cdn_prefix}{chosen_pic_encoded}"
                         
                         logger.info(f"[随机图片] 成功抽取并发送图片: {pic_url}")
                         yield event.image_result(pic_url)
