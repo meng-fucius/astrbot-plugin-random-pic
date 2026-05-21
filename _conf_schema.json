@@ -1,0 +1,20 @@
+{
+  "api_url": {
+    "description": "图床索引 API 地址",
+    "type": "string",
+    "default": "https://api.github.com/repos/YOUR_USER/YOUR_REPO/contents/YOUR_FOLDER",
+    "hint": "返回 JSON 数组，每个元素需包含 name 字段（GitHub Contents API 格式）"
+  },
+  "cdn_prefix": {
+    "description": "图片 CDN 直链前缀",
+    "type": "string",
+    "default": "https://cdn.jsdelivr.net/gh/YOUR_USER/YOUR_REPO@main/YOUR_FOLDER/",
+    "hint": "最终图片地址 = cdn_prefix + 文件名"
+  },
+  "command_trigger": {
+    "description": "触发指令",
+    "type": "string",
+    "default": "随机图片",
+    "hint": "用户发送此关键词即可获得随机图片，修改后需重载插件"
+  }
+}
